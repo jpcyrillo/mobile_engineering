@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:mobile_engineering/models/delivery.dart';
 import 'package:mobile_engineering/widgets/delivery_item.dart';
-
 import '../repositories/delivery_repository.dart';
 
 class HomePage extends StatefulWidget {
@@ -25,11 +24,15 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-    deliveryRepository.getDeliveryList().then((value) {
-      setState(() {
-        deliveryList = value;
-      });
-    });
+    deliveryRepository.getDeliveryList().then(
+      (value) {
+        setState(
+          () {
+            deliveryList = value;
+          },
+        );
+      },
+    );
   }
 
   @override
@@ -66,38 +69,39 @@ class _HomePageState extends State<HomePage> {
                 ),
                 const SizedBox(height: 15),
                 Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      const Text(
-                        'Adicionar Entrega',
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 30,
-                        ),
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    const Text(
+                      'Adicionar Entrega',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 30,
                       ),
-                      const SizedBox(height: 20),
-                      ElevatedButton(
-                        onPressed: () => addDelivery(),
-                        style: ElevatedButton.styleFrom(
-                          shadowColor: Colors.black,
-                          side: const BorderSide(
-                            color: Colors.black,
-                          ),
-                          backgroundColor: Colors.white70,
-                          foregroundColor: Colors.black,
-                          padding: const EdgeInsets.all(10),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(100),
-                          ),
-                        ),
-                        child: const Icon(
-                          Icons.add,
-                          size: 80,
+                    ),
+                    const SizedBox(height: 20),
+                    ElevatedButton(
+                      onPressed: () => addDelivery(),
+                      style: ElevatedButton.styleFrom(
+                        shadowColor: Colors.black,
+                        side: const BorderSide(
                           color: Colors.black,
                         ),
+                        backgroundColor: Colors.white70,
+                        foregroundColor: Colors.black,
+                        padding: const EdgeInsets.all(10),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(100),
+                        ),
                       ),
-                    ]),
+                      child: const Icon(
+                        Icons.add,
+                        size: 80,
+                        color: Colors.black,
+                      ),
+                    ),
+                  ],
+                ),
                 const SizedBox(height: 15),
               ],
             ),
@@ -140,11 +144,13 @@ class _HomePageState extends State<HomePage> {
   }
 
   void addDelivery() {
-    setState(() {
-      Delivery newDelivery = Delivery(title: "$i", dateTime: DateTime.now());
-      deliveryList.add(newDelivery);
-      errorText = null;
-    });
+    setState(
+      () {
+        Delivery newDelivery = Delivery(title: "$i", dateTime: DateTime.now());
+        deliveryList.add(newDelivery);
+        errorText = null;
+      },
+    );
     deliveryRepository.saveDeliveryList(deliveryList);
     i++;
   }
@@ -153,58 +159,67 @@ class _HomePageState extends State<HomePage> {
     deletedDelivery = delivery;
     deletedDeliveryPosition = deliveryList.indexOf(delivery);
 
-    setState(() {
-      deliveryList.remove(delivery);
-    });
+    setState(
+      () {
+        deliveryList.remove(delivery);
+      },
+    );
 
     deliveryRepository.saveDeliveryList(deliveryList);
 
     ScaffoldMessenger.of(context).clearSnackBars();
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-      content: Text('Entrega "${delivery.title}" foi removida com sucesso!'),
-      action: SnackBarAction(
-        label: 'Desfazer',
-        onPressed: () {
-          setState(() {
-            deliveryList.insert(deletedDeliveryPosition!, deletedDelivery!);
-          });
-          deliveryRepository.saveDeliveryList(deliveryList);
-        },
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('Entrega "${delivery.title}" foi removida com sucesso!'),
+        action: SnackBarAction(
+          label: 'Desfazer',
+          onPressed: () {
+            setState(
+              () {
+                deliveryList.insert(deletedDeliveryPosition!, deletedDelivery!);
+              },
+            );
+            deliveryRepository.saveDeliveryList(deliveryList);
+          },
+        ),
+        duration: const Duration(seconds: 5),
       ),
-      duration: const Duration(seconds: 5),
-    ));
+    );
   }
 
   void deleteAllDeliveries() {
-    setState(() {
-      deliveryList.clear();
-    });
+    setState(
+      () {
+        deliveryList.clear();
+      },
+    );
     deliveryRepository.saveDeliveryList(deliveryList);
   }
 
   void showDeleteAllDeliveriesDialogue() {
     showDialog(
-        context: context,
-        builder: (context) => AlertDialog(
-              title: const Text('Limpar tudo?'),
-              content: const Text(
-                  'Você tem certeza que deseja apagar todas as entregas?'),
-              actions: [
-                TextButton(
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                  child: const Text('Cancelar'),
-                ),
-                TextButton(
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                    deleteAllDeliveries();
-                  },
-                  style: TextButton.styleFrom(foregroundColor: Colors.red),
-                  child: const Text('Limpar tudo'),
-                ),
-              ],
-            ));
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Limpar tudo?'),
+        content:
+            const Text('Você tem certeza que deseja apagar todas as entregas?'),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+            child: const Text('Cancelar'),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+              deleteAllDeliveries();
+            },
+            style: TextButton.styleFrom(foregroundColor: Colors.red),
+            child: const Text('Limpar tudo'),
+          ),
+        ],
+      ),
+    );
   }
 }
