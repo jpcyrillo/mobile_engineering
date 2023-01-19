@@ -1,19 +1,20 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:mobile_engineering/models/delivery.dart';
+import 'package:mobile_engineering/screens/product_register_page.dart';
 import 'package:mobile_engineering/widgets/delivery_item.dart';
 import '../repositories/delivery_repository.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+  HomePage({super.key});
 
   @override
   State<HomePage> createState() => _HomePageState();
 }
 
 class _HomePageState extends State<HomePage> {
-  final DeliveryRepository deliveryRepository = DeliveryRepository();
-  List<Delivery> deliveryList = [];
+  final DeliveryRepository deliveryRepository =
+      ProductRegisterPage().deliveryRepository;
+  List<Delivery> deliveryList = ProductRegisterPage().deliveryList;
   List<Delivery>? deletedDeliveryList;
   Delivery? deletedDelivery;
   int? deletedDeliveryPosition;
@@ -81,13 +82,11 @@ class _HomePageState extends State<HomePage> {
                     const SizedBox(height: 20),
                     ElevatedButton(
                       onPressed: () {
-                        /*Navigator.push(
+                        Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) =>
-                                  const ProductRegisterPage()),
-                        );*/
-                        addDelivery();
+                              builder: (context) => ProductRegisterPage()),
+                        );
                       },
                       style: ElevatedButton.styleFrom(
                         shadowColor: Colors.black,
@@ -148,18 +147,6 @@ class _HomePageState extends State<HomePage> {
         ),
       ),
     );
-  }
-
-  void addDelivery() {
-    setState(
-      () {
-        Delivery newDelivery =
-            Delivery(productName: "$i", dateTime: DateTime.now());
-        deliveryList.add(newDelivery);
-      },
-    );
-    deliveryRepository.saveDeliveryList(deliveryList);
-    i++;
   }
 
   void deleteDelivery(Delivery delivery) {

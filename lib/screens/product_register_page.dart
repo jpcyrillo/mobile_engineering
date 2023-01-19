@@ -1,22 +1,33 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:mobile_engineering/screens/home_page.dart';
 import '../models/delivery.dart';
 import '../repositories/delivery_repository.dart';
-import 'home_page.dart';
 
 class ProductRegisterPage extends StatefulWidget {
-  const ProductRegisterPage({super.key});
+  ProductRegisterPage({super.key});
+
+  final DeliveryRepository deliveryRepository = DeliveryRepository();
+  List<Delivery> deliveryList = [];
 
   @override
   State<ProductRegisterPage> createState() => _ProductRegisterPageState();
 }
 
 class _ProductRegisterPageState extends State<ProductRegisterPage> {
-  final TextEditingController textController = TextEditingController();
-  String? errorText;
-  int i = 0;
-  final DeliveryRepository deliveryRepository = DeliveryRepository();
-  List<Delivery> deliveryList = [];
+  final TextEditingController productNameTextController =
+      TextEditingController();
+  final TextEditingController productBrandTextController =
+      TextEditingController();
+  final TextEditingController productWeightTextController =
+      TextEditingController();
+  final TextEditingController initialDateTextController =
+      TextEditingController();
+  final TextEditingController finalDateTextController = TextEditingController();
+  final TextEditingController productReceiverTextController =
+      TextEditingController();
+
+  String? errorText = '';
   List<Delivery>? deletedDeliveryList;
   Delivery? deletedDelivery;
   int? deletedDeliveryPosition;
@@ -24,11 +35,11 @@ class _ProductRegisterPageState extends State<ProductRegisterPage> {
   @override
   void initState() {
     super.initState();
-    deliveryRepository.getDeliveryList().then(
+    widget.deliveryRepository.getDeliveryList().then(
       (value) {
         setState(
           () {
-            deliveryList = value;
+            widget.deliveryList = value;
           },
         );
       },
@@ -44,25 +55,121 @@ class _ProductRegisterPageState extends State<ProductRegisterPage> {
             padding: const EdgeInsets.all(20),
             child: Column(
               children: [
-                const SizedBox(height: 10),
+                const SizedBox(height: 5),
+                Text(
+                  errorText.toString(),
+                  style: const TextStyle(
+                      fontWeight: FontWeight.bold, color: Colors.red),
+                ),
+                const SizedBox(height: 15),
                 Expanded(
+                  flex: 1,
                   child: TextField(
-                    controller: textController,
-                    decoration: InputDecoration(
-                      border: const OutlineInputBorder(),
+                    controller: productNameTextController,
+                    decoration: const InputDecoration(
+                      border: OutlineInputBorder(),
                       labelText: 'Nome do Produto',
                       hintText: 'Ex. Geladeira',
-                      errorText: errorText,
-                      focusedBorder: const OutlineInputBorder(
+                      focusedBorder: OutlineInputBorder(
                         borderSide: BorderSide(color: Colors.black, width: 2),
                       ),
-                      labelStyle: const TextStyle(
+                      labelStyle: TextStyle(
                         color: Colors.black,
                       ),
                     ),
                   ),
                 ),
-                const SizedBox(width: 10),
+                const SizedBox(height: 10),
+                Expanded(
+                  flex: 1,
+                  child: TextField(
+                    controller: productBrandTextController,
+                    decoration: const InputDecoration(
+                      border: OutlineInputBorder(),
+                      labelText: 'Nome da marca do Produto',
+                      hintText: 'Ex. Brastemp',
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.black, width: 2),
+                      ),
+                      labelStyle: TextStyle(
+                        color: Colors.black,
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 10),
+                Expanded(
+                  flex: 1,
+                  child: TextField(
+                    controller: productWeightTextController,
+                    decoration: const InputDecoration(
+                      border: OutlineInputBorder(),
+                      labelText: 'Peso do Produto',
+                      hintText: 'Ex. 50kg',
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.black, width: 2),
+                      ),
+                      labelStyle: TextStyle(
+                        color: Colors.black,
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 10),
+                Expanded(
+                  flex: 1,
+                  child: TextField(
+                    controller: initialDateTextController,
+                    decoration: const InputDecoration(
+                      border: OutlineInputBorder(),
+                      labelText: 'Data inicial do pedido',
+                      hintText: 'Ex. 05/10/2023',
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.black, width: 2),
+                      ),
+                      labelStyle: TextStyle(
+                        color: Colors.black,
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 10),
+                Expanded(
+                  flex: 1,
+                  child: TextField(
+                    controller: finalDateTextController,
+                    decoration: const InputDecoration(
+                      border: OutlineInputBorder(),
+                      labelText: 'Data final para a entrega',
+                      hintText: '25/10/2023',
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.black, width: 2),
+                      ),
+                      labelStyle: TextStyle(
+                        color: Colors.black,
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 10),
+                Expanded(
+                  flex: 1,
+                  child: TextField(
+                    controller: productReceiverTextController,
+                    decoration: const InputDecoration(
+                      border: OutlineInputBorder(),
+                      labelText: 'Nome da receptor do Produto',
+                      hintText: 'Ex. Marcos',
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.black, width: 2),
+                      ),
+                      labelStyle: TextStyle(
+                        color: Colors.black,
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 15),
                 ElevatedButton(
                   onPressed: () {
                     addDelivery();
@@ -85,23 +192,42 @@ class _ProductRegisterPageState extends State<ProductRegisterPage> {
   }
 
   void addDelivery() {
-    String productName = textController.text;
+    String productName = productNameTextController.text.toString();
+    String productBrand = productBrandTextController.text.toString();
+    String productWeight = productWeightTextController.text.toString();
+    String initialDate = initialDateTextController.text.toString();
+    String finalDate = finalDateTextController.text.toString();
+    String productReceiver = productReceiverTextController.text;
 
-    if (productName.isEmpty) {
+    if (productName.isEmpty ||
+        productBrand.isEmpty ||
+        productWeight.isEmpty ||
+        initialDate.isEmpty ||
+        finalDate.isEmpty ||
+        productReceiver.isEmpty) {
       setState(() {
-        errorText = 'O nome do produto não pode ser vazio!';
+        errorText = 'Preencha todos os campos!';
       });
       return;
     }
 
-    setState(
-      () {
-        Delivery newDelivery =
-            Delivery(productName: productName, dateTime: DateTime.now());
-        deliveryList.add(newDelivery);
-      },
+    Delivery newDelivery = Delivery(
+        productName: productName,
+        productBrand: productBrand,
+        productWeight: productWeight,
+        initialDate: initialDate,
+        finalDate: finalDate,
+        productReceiver: productReceiver,
+        dateTime: DateTime.now());
+    widget.deliveryList.add(newDelivery);
+
+    widget.deliveryRepository.saveDeliveryList(widget.deliveryList);
+
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(
+        builder: (context) => HomePage(),
+      ),
     );
-    deliveryRepository.saveDeliveryList(deliveryList);
-    Navigator.pop(context);
   }
 }
