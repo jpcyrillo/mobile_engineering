@@ -18,7 +18,7 @@ class DeliveryItem extends StatelessWidget {
       child: Slidable(
         endActionPane: ActionPane(
           motion: const StretchMotion(),
-          extentRatio: 0.2,
+          extentRatio: 0.22,
           children: [
             SlidableAction(
               borderRadius: BorderRadius.circular(5),
@@ -51,7 +51,7 @@ class DeliveryItem extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.all(5.0),
                 child: Text(
-                  delivery.title,
+                  delivery.productName,
                   style: const TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w600,

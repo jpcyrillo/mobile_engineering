@@ -12,14 +12,13 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  int i = 1;
-  final TextEditingController deliveryController = TextEditingController();
   final DeliveryRepository deliveryRepository = DeliveryRepository();
   List<Delivery> deliveryList = [];
   List<Delivery>? deletedDeliveryList;
   Delivery? deletedDelivery;
   int? deletedDeliveryPosition;
   String? errorText;
+  int i = 0;
 
   @override
   void initState() {
@@ -81,7 +80,15 @@ class _HomePageState extends State<HomePage> {
                     ),
                     const SizedBox(height: 20),
                     ElevatedButton(
-                      onPressed: () => addDelivery(),
+                      onPressed: () {
+                        /*Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) =>
+                                  const ProductRegisterPage()),
+                        );*/
+                        addDelivery();
+                      },
                       style: ElevatedButton.styleFrom(
                         shadowColor: Colors.black,
                         side: const BorderSide(
@@ -146,9 +153,9 @@ class _HomePageState extends State<HomePage> {
   void addDelivery() {
     setState(
       () {
-        Delivery newDelivery = Delivery(title: "$i", dateTime: DateTime.now());
+        Delivery newDelivery =
+            Delivery(productName: "$i", dateTime: DateTime.now());
         deliveryList.add(newDelivery);
-        errorText = null;
       },
     );
     deliveryRepository.saveDeliveryList(deliveryList);
@@ -170,7 +177,8 @@ class _HomePageState extends State<HomePage> {
     ScaffoldMessenger.of(context).clearSnackBars();
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text('Entrega "${delivery.title}" foi removida com sucesso!'),
+        content:
+            Text('Entrega "${delivery.productName}" foi removida com sucesso!'),
         action: SnackBarAction(
           label: 'Desfazer',
           onPressed: () {

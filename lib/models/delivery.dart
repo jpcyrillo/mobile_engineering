@@ -1,14 +1,14 @@
 class Delivery {
-  Delivery({required this.title, required this.dateTime});
+  Delivery({required this.productName, required this.dateTime});
 
   Delivery.fromJson(Map<String, dynamic> json)
-      : title = json['title'],
+      : productName = json['productName'],
         dateTime = DateTime.parse(json['dateTime']);
 
-  String title;
+  String productName;
   DateTime dateTime;
 
   Map<String, dynamic> toJson() {
-    return {'title': title, 'dateTime': dateTime.toIso8601String()};
+    return {'productName': productName, 'dateTime': dateTime.toIso8601String()};
   }
 }
